@@ -1,0 +1,46 @@
+<?php
+session_start();
+include("conf.php");
+require_once("mailer.php");
+
+$nom = $_POST['Nom'];
+$prenom = $_POST['prenom'];
+$email = $_POST['email'];
+$mdpHash = password_hash($_POST['mdp'], PASSWORD_DEFAULT);
+
+$connexion = mysqli_connect($serveur, $user, $mdp, $nomBdd);
+if (!$connexion) {
+    die("Erreur de connexion à la base de données : " . mysqli_connect_error());
+}
+
+$requete = "INSERT INTO {$prefixe}joueur (nom, prenom, email, mdp) VALUES (?, ?, ?, ?)";
+$stmt = mysqli_prepare($connexion, $requete);
+mysqli_stmt_bind_param($stmt, "ssss", $nom, $prenom, $email, $mdpHash);
+$ok = mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
+mysqli_close($connexion);
+
+if ($ok) {
+    $objet = "Confirmation d'inscription";
+    $message = "Bonjour $prenom $nom,\n\n";
+    $message .= "Votre compte GameZone a bien été créé. Vous pouvez maintenant vous inscrire aux tournois.\n\n";
+    $message .= "Merci";
+    envoiMail($email, $objet, $message);
+    $texte = "Votre compte a bien été créé, vous pouvez vous connecter.";
+} else {
+    $texte = "Erreur lors de l'enregistrement (cet email est peut-être déjà utilisé).";
+}
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <?php include("menu.php"); ?>
+    <p><?php echo $texte; ?></p>
+</body>
+</html>

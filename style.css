@@ -1,0 +1,355 @@
+/* ==========================================================
+   GAMEZONE – thème « tactique »
+   Béton gris-bleu, orange signal, polices condensées
+   ========================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Big+Shoulders+Display:wght@700;800&display=swap");
+
+:root {
+    --beton: #1f2a2e;
+    --acier: #29373c;
+    --acier-clair: #34454b;
+    --trait: #4a5f66;
+    --texte: #e6e9e4;
+    --texte-doux: #9fb0b3;
+    --feu: #ff7a1a;
+    --feu-fonce: #e0640a;
+    --encre: #1a1208;
+    --focus: #7fd6e6;
+
+    --police-titre: "Big Shoulders Display", "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+    --police-texte: "Barlow", "Segoe UI", Arial, sans-serif;
+
+    color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    background: var(--beton);
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    max-width: 64rem;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+    color: var(--texte);
+    font-family: var(--police-texte);
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+/* ---------- En-tête (généré par menu.php) ---------- */
+
+.entete {
+    margin-bottom: 2.5rem;
+}
+
+.entete__ligne {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-bottom: 1.25rem;
+}
+
+/* Le logo : une étiquette orange découpée en biais */
+.logo {
+    margin: 0;
+    background: var(--feu);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%);
+    font-family: var(--police-titre);
+    font-weight: 800;
+    font-size: clamp(2rem, 6vw, 2.8rem);
+    line-height: 1;
+}
+
+.logo a {
+    display: block;
+    padding: 0.45rem 2.25rem 0.45rem 1rem;
+    color: var(--encre);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+}
+
+.logo a:hover {
+    color: var(--encre);
+}
+
+.logo a:focus-visible {
+    outline: 3px solid var(--encre);
+    outline-offset: -6px;
+}
+
+/* Bande de chantier sous l'en-tête */
+.entete::after {
+    content: "";
+    display: block;
+    height: 8px;
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--feu) 0 10px,
+        var(--encre) 10px 20px
+    );
+}
+
+.menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+}
+
+.menu a {
+    padding: 0.35rem 0;
+    color: var(--texte);
+    border-bottom: 3px solid transparent;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.15s ease;
+}
+
+.menu a:hover {
+    color: var(--texte);
+    border-bottom-color: var(--trait);
+}
+
+.menu a.actif {
+    border-bottom-color: var(--feu);
+}
+
+/* ---------- Titres, textes, liens ---------- */
+
+h2 {
+    margin: 0 0 1.25rem;
+    font-family: var(--police-titre);
+    font-weight: 800;
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    line-height: 1.1;
+}
+
+p {
+    margin: 0 0 1rem;
+}
+
+a {
+    color: var(--texte);
+    text-decoration: underline;
+    text-decoration-color: var(--feu);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+}
+
+a:hover {
+    color: var(--feu);
+}
+
+a:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+}
+
+/* Message de retour (<p class="message message--ok">) */
+.message {
+    padding: 0.75rem 1rem;
+    background: var(--acier);
+    border-left: 4px solid var(--feu);
+}
+
+.message--ok {
+    border-left-color: var(--focus);
+}
+
+/* ---------- Formulaires ---------- */
+
+form {
+    max-width: 28rem;
+    margin: 1.5rem 0 0;
+    padding: 1.75rem 1.75rem 2rem;
+    background: var(--acier);
+    border-left: 4px solid var(--feu);
+    clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%);
+    font-weight: 500;
+}
+
+form br {
+    display: none;
+}
+
+input,
+select {
+    display: block;
+    width: 100%;
+    margin: 0.4rem 0 1.2rem;
+    padding: 0.7rem 0.85rem;
+    background: var(--beton);
+    color: var(--texte);
+    border: 1px solid var(--trait);
+    border-radius: 2px;
+    font: inherit;
+    font-weight: 400;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:hover,
+select:hover {
+    border-color: var(--texte-doux);
+}
+
+input:focus-visible,
+select:focus-visible {
+    outline: none;
+    border-color: var(--focus);
+    box-shadow: 0 0 0 3px rgba(127, 214, 230, 0.35);
+}
+
+select {
+    cursor: pointer;
+}
+
+input[type="submit"] {
+    margin: 0.5rem 0 0;
+    padding: 0.75rem 1.25rem;
+    background: var(--feu);
+    color: var(--encre);
+    border: 0;
+    font-family: var(--police-titre);
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+input[type="submit"]:hover {
+    background: var(--feu-fonce);
+}
+
+input[type="submit"]:active {
+    transform: translateY(1px);
+}
+
+input[type="submit"]:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+    box-shadow: none;
+}
+
+/* ---------- Tableaux (jeux, joueurs, tournois, inscrits) ---------- */
+
+table {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+    background: var(--acier);
+}
+
+th,
+td {
+    padding: 0.9rem 1.1rem;
+    border: 0;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background: var(--acier-clair);
+    border-bottom: 3px solid var(--feu);
+    font-family: var(--police-titre);
+    font-weight: 700;
+    font-size: 1.15rem;
+    white-space: nowrap;
+}
+
+td {
+    border-bottom: 1px solid var(--trait);
+}
+
+tr:last-child td {
+    border-bottom: 0;
+}
+
+tr:hover td {
+    background: var(--acier-clair);
+}
+
+tr:hover td:first-child {
+    box-shadow: inset 4px 0 0 var(--feu);
+}
+
+td:first-child,
+th:first-child {
+    width: 4.5rem;
+    color: var(--texte-doux);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Logos des jeux (jeux.php) */
+td img {
+    display: block;
+    max-width: 12rem;
+    height: auto;
+}
+
+/* Boutons d'action dans les tableaux (ex. Supprimer) */
+td form {
+    display: inline;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    clip-path: none;
+}
+
+td input[type="submit"] {
+    display: inline-block;
+    width: auto;
+    margin: 0;
+    padding: 0.2rem 0.7rem;
+    background: transparent;
+    color: var(--feu);
+    border: 1px solid var(--feu);
+    border-radius: 2px;
+    font-family: var(--police-texte);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+td input[type="submit"]:hover {
+    background: var(--feu);
+    color: var(--encre);
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 40rem) {
+    body {
+        padding: 1.25rem 0.9rem 3rem;
+    }
+
+    form {
+        padding: 1.25rem 1.25rem 1.5rem;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+/* ---------- Accessibilité : réduire les animations ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}
