@@ -90,7 +90,7 @@ $tournois = mysqli_fetch_all($requete, MYSQLI_ASSOC);
         le <?= htmlspecialchars($tournoi['date']) ?>
     </p>
 
-    <form action="monprofil.php" method="post">
+    <form action="index.php" method="post">
         <input type="hidden" name="tournoi_id" value="<?= (int)$tournoi['id'] ?>">
         <button type="submit" name="desinscrire">Se désinscrire</button>
     </form>
