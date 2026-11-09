@@ -1,4 +1,6 @@
 <?php
+session_start();
+include("conf.php");
 if (!isset($_SESSION['id'])) {
     header('Location: connexion.php');
     exit;
@@ -81,6 +83,7 @@ $requete->execute([
 
 </head>
 <body>
+
      <?php include("menu.php"); ?>
 <form action="desinscription.php" method="post">
     <input type="hidden" name="tournoi_id" value="<?= (int)$tournoi['id'] ?>">
