@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 require_once("conf.php");
@@ -9,6 +10,19 @@ if (!isset($_SESSION['id'])) {
 }
 
 $idJoueur = (int)$_SESSION['id'];
+
+// Désinscription d'un tournoi
+if (isset($_POST['desinscrire'])) {
+    $idTournoi = (int)$_POST['tournoi_id'];
+
+    mysqli_query($connexion,
+        "DELETE FROM {$prefixe}inscrire
+         WHERE joueur_id = $idJoueur
+         AND tournoi_id = $idTournoi");
+
+    header("Location: profil.php");
+    exit;
+}
 
 if (isset($_POST['modifier_profil'])) {
     $nom = mysqli_real_escape_string($connexion, $_POST['nom']);
@@ -68,16 +82,19 @@ $tournois = mysqli_fetch_all($requete, MYSQLI_ASSOC);
 </form>
 
 <h2>Mes tournois</h2>
+
 <?php foreach ($tournois as $tournoi): ?>
     <p>
         <?= htmlspecialchars($tournoi['nom']) ?>
         (<?= htmlspecialchars($tournoi['jeu']) ?>)
         le <?= htmlspecialchars($tournoi['date']) ?>
     </p>
-    <form action="index.php" method="post">
+
+    <form action="profil.php" method="post">
         <input type="hidden" name="tournoi_id" value="<?= (int)$tournoi['id'] ?>">
-        <button type="submit">Se désinscrire</button>
+        <button type="submit" name="desinscrire">Se désinscrire</button>
     </form>
+
 <?php endforeach; ?>
 
 </body>
