@@ -1,59 +1,63 @@
-
 <?php
+session_start();
 include("conf.php");
-$connexion = mysqli_connect($serveur, $user, $mdp, $nomBdd);
 require_once("mailer.php");
 
-$email = trim($_POST['email']);
-$Nom = $_POST['Nom'];
+$nom = $_POST['Nom'];
 $prenom = $_POST['prenom'];
-$jeu = $_POST['jeu'];
+$email = $_POST['email'];
+$mdpHash = password_hash($_POST['mdp'], PASSWORD_DEFAULT);
 
-// Vérifier si l'email existe déjà
-$stmt = mysqli_prepare($connexion,
-    "SELECT id FROM {$prefixe}joueur WHERE email = ?");
+$connexion = mysqli_connect($serveur, $user, $mdp, $nomBdd);
 
-mysqli_stmt_bind_param($stmt, "s", $email);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_store_result($stmt);
-
-if (mysqli_stmt_num_rows($stmt) > 0) {
-    echo "Erreur : un joueur avec cet email existe déjà.
-    <a href='index.php'>Retour</a>";
-    exit;
+if (!$connexion) {
+    die("Erreur de connexion à la base de données : " . mysqli_connect_error());
 }
 
-mysqli_stmt_close($stmt);
+// Vérifier si l'email existe déjà
+$verification = "SELECT email FROM {$prefixe}joueur WHERE email = ?";
+$stmt = mysqli_prepare($connexion, $verification);
+mysqli_stmt_bind_param($stmt, "s", $email);
+mysqli_stmt_execute($stmt);
+$resultat = mysqli_stmt_get_result($stmt);
 
-// Création du mot de passe hashé
-$hash = password_hash($_POST["mdp"], PASSWORD_DEFAULT);
-
-// Inscription du joueur
-$stmt = mysqli_prepare($connexion,
-    "INSERT INTO {$prefixe}joueur (nom, prenom, email, jeu, mdp)
-     VALUES (?, ?, ?, ?, ?)");
-
-mysqli_stmt_bind_param($stmt, "sssss",
-    $Nom, $prenom, $email, $jeu, $hash);
-
-if (mysqli_stmt_execute($stmt)) {
-
-    // Envoi du mail de confirmation
-    $objet = "Confirmation d'inscription";
-
-    $message = "Bonjour $prenom $Nom,\n\n";
-    $message .= "Votre inscription au tournoi GameZone a bien été enregistrée.\n\n";
-    $message .= "Merci";
-
-    envoiMail($email, $objet, $message);
-
-    header("Location: index.php");
-    exit;
-
+if (mysqli_num_rows($resultat) > 0) {
+    $texte = "Cette adresse email existe déjà. Veuillez utiliser une autre adresse.";
 } else {
-    echo "Erreur lors de l'inscription : " . mysqli_error($connexion);
+
+    $requete = "INSERT INTO {$prefixe}joueur (nom, prenom, email, mdp) VALUES (?, ?, ?, ?)";
+    $stmt = mysqli_prepare($connexion, $requete);
+    mysqli_stmt_bind_param($stmt, "ssss", $nom, $prenom, $email, $mdpHash);
+    $ok = mysqli_stmt_execute($stmt);
+
+    if ($ok) {
+        $objet = "Confirmation d'inscription";
+        $message = "Bonjour $prenom $nom,\n\n";
+        $message .= "Votre compte GameZone a bien été créé. Vous pouvez maintenant vous inscrire aux tournois.\n\n";
+        $message .= "Merci";
+        envoiMail($email, $objet, $message);
+        $texte = "Votre compte a bien été créé, vous pouvez vous connecter.";
+    } else {
+        $texte = "Erreur lors de l'enregistrement.";
+    }
+
+    mysqli_stmt_close($stmt);
 }
 
 mysqli_stmt_close($stmt);
 mysqli_close($connexion);
 ?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <?php include("menu.php"); ?>
+    <p><?php echo $texte; ?></p>
+</body>
+</html>
