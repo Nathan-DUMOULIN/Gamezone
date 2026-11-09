@@ -9,7 +9,7 @@
     <form action="ajouter_jeu.php" method="post" enctype="multipart/form-data">
     <label>Nom du jeu :</label>
     <input type="text" name="nom" required>
-
+    <?php include("menu.php"); ?>
     <label>Description :</label>
     <textarea name="description"></textarea>
 
@@ -29,7 +29,7 @@ if (!isset($_SESSION['id']) || $_SESSION['type'] != 1) {
 
 include("conf.php");
 include("admin_only.php");
-include("menu.php");
+
 
 
 
