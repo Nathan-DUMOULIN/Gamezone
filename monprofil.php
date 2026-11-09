@@ -74,7 +74,7 @@ $tournois = mysqli_fetch_all($requete, MYSQLI_ASSOC);
         (<?= htmlspecialchars($tournoi['jeu']) ?>)
         le <?= htmlspecialchars($tournoi['date']) ?>
     </p>
-    <form action="desinscription.php" method="post">
+    <form action="index.php" method="post">
         <input type="hidden" name="tournoi_id" value="<?= (int)$tournoi['id'] ?>">
         <button type="submit">Se désinscrire</button>
     </form>
