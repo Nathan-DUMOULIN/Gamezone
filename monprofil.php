@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("conf.php");
+require_once("conf.php");
 if (!isset($_SESSION['id'])) {
     header('Location: connexion.php');
     exit;
