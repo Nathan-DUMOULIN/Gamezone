@@ -1,6 +1,8 @@
 <?php
 session_start();
 require_once("conf.php");
+$connexion = mysqli_connect($serveur, $user, $mdp, $nomBdd);
+
 if (!isset($_SESSION['id'])) {
     header('Location: connexion.php');
     exit;
