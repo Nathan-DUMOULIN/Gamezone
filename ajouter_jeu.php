@@ -6,10 +6,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+     <?php include("menu.php"); ?>
     <form action="ajouter_jeu.php" method="post" enctype="multipart/form-data">
     <label>Nom du jeu :</label>
     <input type="text" name="nom" required>
-    <?php include("menu.php"); ?>
+    
     <label>Description :</label>
     <textarea name="description"></textarea>
 
@@ -81,7 +82,7 @@ $stmt = mysqli_prepare($connexion, "INSERT INTO {$prefixe}jeu (nom, description,
 mysqli_stmt_bind_param($stmt, "sss", $_POST['nom'], $_POST['description'], $nomFichier);
 mysqli_stmt_execute($stmt); 
 }
-d
+
 ?> 
 
 
