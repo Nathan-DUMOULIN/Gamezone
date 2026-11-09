@@ -8,90 +8,77 @@ if (!isset($_SESSION['id'])) {
     exit;
 }
 
-$idJoueur = $_SESSION['id'];
+$idJoueur = (int)$_SESSION['id'];
 
-$requete = $bdd->prepare(
+if (isset($_POST['modifier_profil'])) {
+    $nom = mysqli_real_escape_string($connexion, $_POST['nom']);
+    $prenom = mysqli_real_escape_string($connexion, $_POST['prenom']);
+    $email = mysqli_real_escape_string($connexion, $_POST['email']);
+
+    mysqli_query($connexion,
+        "UPDATE {$prefixe}joueur
+         SET nom = '$nom', prenom = '$prenom', email = '$email'
+         WHERE id = $idJoueur");
+
+    if (!empty($_POST['nouveau_mdp'])) {
+        $hash = password_hash($_POST['nouveau_mdp'], PASSWORD_DEFAULT);
+        mysqli_query($connexion,
+            "UPDATE {$prefixe}joueur
+             SET mdp = '$hash'
+             WHERE id = $idJoueur");
+    }
+}
+
+$requete = mysqli_query($connexion,
     "SELECT id, nom, prenom, email
      FROM {$prefixe}joueur
-     WHERE id = :id"
-);
+     WHERE id = $idJoueur");
+$joueur = mysqli_fetch_assoc($requete);
 
-$requete->execute([':id' => $idJoueur]);
-$joueur = $requete->fetch(PDO::FETCH_ASSOC);
-
-echo htmlspecialchars($joueur['nom']);
-echo htmlspecialchars($joueur['prenom']);
-echo htmlspecialchars($joueur['email']);
-
-$requete = $bdd->prepare(
-    "UPDATE {$prefixe}joueur
-     SET nom = :nom,
-         prenom = :prenom,
-         email = :email
-     WHERE id = :id"
-);
-
-$requete->execute([
-    ':nom' => $_POST['nom'],
-    ':prenom' => $_POST['prenom'],
-    ':email' => $_POST['email'],
-    ':id' => $idJoueur
-]);
-
-$hash = password_hash($_POST['nouveau_mdp'], PASSWORD_DEFAULT);
-
-$requete = $bdd->prepare(
-    "UPDATE {$prefixe}joueur
-     SET mdp = :mdp
-     WHERE id = :id"
-);
-
-$requete->execute([
-    ':mdp' => $hash,
-    ':id' => $idJoueur
-]);
-
-$requete = $bdd->prepare(
+$requete = mysqli_query($connexion,
     "SELECT t.id, t.nom, t.date, j.nom AS jeu
      FROM {$prefixe}inscrire i
      INNER JOIN {$prefixe}tournoi t ON i.tournoi_id = t.id
      INNER JOIN {$prefixe}jeu j ON t.jeu_id = j.id
-     WHERE i.joueur_id = :id
-     ORDER BY t.date"
-);
-
-$requete->execute([':id' => $idJoueur]);
-$tournois = $requete->fetchAll(PDO::FETCH_ASSOC);
-$requete = $bdd->prepare(
-    "DELETE FROM {$prefixe}inscrire
-     WHERE joueur_id = :joueur
-       AND tournoi_id = :tournoi"
-);
-
-$requete->execute([
-    ':joueur' => $idJoueur,
-    ':tournoi' => $_POST['tournoi_id']
-]);
-
+     WHERE i.joueur_id = $idJoueur
+     ORDER BY t.date");
+$tournois = mysqli_fetch_all($requete, MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-        <link rel="stylesheet" href="style.css">
-
+    <title>Mon profil</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-     <?php include("menu.php"); ?>
-<form action="desinscription.php" method="post">
-    <input type="hidden" name="tournoi_id" value="<?= (int)$tournoi['id'] ?>">
-    <button type="submit">Se désinscrire</button>
+<?php include("menu.php"); ?>
+
+<h1>Mon profil</h1>
+
+<form method="post">
+    <input type="text" name="nom" value="<?= htmlspecialchars($joueur['nom']) ?>">
+    <input type="text" name="prenom" value="<?= htmlspecialchars($joueur['prenom']) ?>">
+    <input type="email" name="email" value="<?= htmlspecialchars($joueur['email']) ?>">
+    <input type="password" name="nouveau_mdp" placeholder="Nouveau mot de passe (optionnel)">
+    <button type="submit" name="modifier_profil">Enregistrer</button>
 </form>
 
-    
+<h2>Mes tournois</h2>
+<?php foreach ($tournois as $tournoi): ?>
+    <p>
+        <?= htmlspecialchars($tournoi['nom']) ?>
+        (<?= htmlspecialchars($tournoi['jeu']) ?>)
+        le <?= htmlspecialchars($tournoi['date']) ?>
+    </p>
+    <form action="desinscription.php" method="post">
+        <input type="hidden" name="tournoi_id" value="<?= (int)$tournoi['id'] ?>">
+        <button type="submit">Se désinscrire</button>
+    </form>
+<?php endforeach; ?>
+
 </body>
 </html>
