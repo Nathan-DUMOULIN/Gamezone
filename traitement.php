@@ -14,6 +14,13 @@ $hash = password_hash($_POST["mdp"], PASSWORD_DEFAULT);
 $sql = "insert into {$prefixe}joueur (nom, prenom, email, jeu, mdp) values ('".$Nom."', '".$prenom."', '".$email."',  '".$hash."')";
 mysqli_query($connexion, $sql);
 
+$stmt = mysqli_prepare($connexion, "SELECT id FROM ap3_joueur WHERE email = ?");
+mysqli_stmt_bind_param($stmt, "s", $email);
+mysqli_stmt_execute($stmt);
+if (mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))) {
+    echo "Erreur : un joueur avec cet email existe déjà. <a href='index.php'>Retour</a>";
+    exit;
+}
 
 $objet = "Confirmation d'inscription";
 $message = "Bonjour $prenom $Nom,\n\n";
