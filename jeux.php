@@ -24,7 +24,7 @@ echo "<table border=1><tr>
 	{
 		echo "<tr><td>".$donnees['id']."</td>" ;
 		echo "<td>".$donnees['nom']."</td>" ;
-		echo "<td>".$donnees['description']."</td>" ;
+		echo "<td>".htmlspecialchars($donnees['description'])."</td>" ;
 		echo "<td><img src='images/jeux/" . htmlspecialchars($donnees['logo']) . "' alt='" . htmlspecialchars($donnees['nom']) . "'></td>" ;
 
 		echo "</tr>" ;
